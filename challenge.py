@@ -12,10 +12,11 @@ from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 pd.set_option('display.max_columns', None)
 
 #Carregamento da base de dados e exploração das suas características
-df = pd.read_csv('insurance_data_full.csv')
-#print(df.head()) #imprime as 5 primeiras linhas
+df = pd.read_csv('insurance_dataset.csv')
+print(df.head()) #imprime as 5 primeiras linhas
+print(df.shape)  # Verifica quantas linhas e colunas tem
 
-print(df.describe()) #imprime estatísticas descritivas
 
-
-print(df.info()) 
+print(df.info())       # Tipos de dados e colunas nulas
+print(df.describe())   # Estatísticas para colunas numéricas
+print(df.columns)      # Lista os nomes das colunas
