@@ -41,8 +41,8 @@ for col in ['Gender', 'Marital Status', 'Education Level', 'Occupation', 'Locati
 print(df.head()) # Verificando a transformação
 
 # Dividir os dados em variáveis features (x) e target (y)
-x = df.drop('Premium Amount', axis=1)  # Dados de entrada - todas as colunas menos 'charges'
-y = df['Premium Amount']  # A coluna 'charges' é o target, variável que queremos prever
+x = df.drop('Premium Amount', axis=1)  # Dados de entrada - todas as colunas menos 'Premium Amount'
+y = df['Premium Amount']  # A coluna 'Premium Amount' é o target, variável que queremos prever
 
 # Dividindo o conjunto de dados em treino e teste (80% treino, 20% teste)
 X_train, X_test, y_train, y_test= train_test_split(x, y, test_size=0.2, random_state=42)
