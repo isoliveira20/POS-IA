@@ -59,3 +59,26 @@ plt.figure(figsize=(20, 12))
 sns.heatmap(df.corr(), annot=True, cmap='coolwarm')
 plt.title('Matriz de correlação')
 plt.show()
+
+# Criando o modelo de regressão linear
+model = LinearRegression() 
+model.fit(X_train_scaled, y_train) # Treina o modelo com os dados de treino
+# Fazendo previsões com os dados de teste
+y_pred = model.predict(X_test_scaled) # Faz previsões com os dados de teste
+# Avaliando o modelo
+mae = mean_absolute_error(y_test, y_pred) # Erro médio absoluto
+mse = mean_squared_error(y_test, y_pred) # Erro médio quadrático
+rmse = np.sqrt(mse) # Raiz do erro médio quadrático
+r2 = r2_score(y_test, y_pred) # Coeficiente de determinação R²
+print(f'MAE: {mae}')
+print(f'MSE: {mse}')
+print(f'RMSE: {rmse}')
+print(f'R²: {r2}')
+# Visualizando os resultados
+plt.figure(figsize=(10, 6))
+plt.scatter(y_test, y_pred)
+plt.xlabel('Valores reais') 
+plt.ylabel('Valores previstos')
+plt.title('Valores reais vs Valores previstos')
+plt.plot([y.min(), y.max()], [y.min(), y.max()], 'r--') # linha vermelha
+plt.show()
