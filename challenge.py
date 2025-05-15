@@ -177,3 +177,21 @@ plt.ylabel('Valores Preditos')
 plt.title('Valores Reais vs Valores Preditos Random Forest')
 plt.plot([y.min(), y.max()], [y.min(), y.max()], 'k--', lw=2)
 plt.show()
+
+# == Lass Regression == #
+from sklearn.linear_model import Lasso
+# Criando o modelo Lasso Regression
+lasso_model = Lasso(alpha=0.1)
+# Treinando o modelo com os dados de treino
+lasso_model.fit(X_train, y_train)
+# Fazendo previsões com os dados de teste
+y_pred_lasso = lasso_model.predict(X_test)
+# Avaliação do modelo
+mae_lasso = mean_absolute_error(y_test, y_pred_lasso)
+mse_lasso = mean_squared_error(y_test, y_pred_lasso)
+rmse_lasso = np.sqrt(mse_lasso)
+r2_lasso = r2_score(y_test, y_pred_lasso)
+print("MAE Lasso:", mae_lasso)
+print("MSE Lasso:", mse_lasso)
+print("RMSE Lasso:", rmse_lasso)
+print("R2 Lasso:", r2_lasso)
