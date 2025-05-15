@@ -7,13 +7,15 @@ import numpy as np
 from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler, MinMaxScaler, LabelEncoder
-from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score 
+from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
+from sklearn.impute import SimpleImputer
+
 
 #Exploração de dados:
 pd.set_option('display.max_columns', None)
 
 #Carregamento da base de dados e exploração das suas características
-df = pd.read_csv('insurance_dataset.csv')
+df = pd.read_csv('health_insurance_dataset.csv')
 print(df.head()) #imprime as 5 primeiras linhas
 print(df.shape)  # Verifica quantas linhas e colunas tem
 
@@ -25,6 +27,14 @@ print(df.columns)      # Lista os nomes das colunas
 #Valores nulos
 print(df.isnull().sum()) # imprime a soma de valores nulos por coluna
 
+#tratamento de valores nulos
+df['genetic_risk'] = df['genetic_risk'].fillna(df['genetic_risk'].mean())
+df['alcohol_consumption'] = df['alcohol_consumption'].fillna(df['alcohol_consumption'].median())
+df['diet'] = df['diet'].fillna(df['diet'].mode()[0])
+
+#Verifica se ainda existem valores nulos
+print(df.isnull().sum()) # imprime a soma de valores nulos por coluna
+
 #Valores duplicados
 print(df.duplicated().sum()) #imprime a soma de valores duplicados por coluna
 
@@ -34,51 +44,136 @@ print(df.duplicated().sum()) #imprime a soma de valores duplicados por coluna
 
 # Tratamento de variáveis categóricas p/ numéricas usando LabelEncoder
 label_encoder = LabelEncoder()
-for col in ['gender', 'marital_status', 'education_level', 'occupation', 'location', 'policy_type', 'policy_start_date', 'smoking_status', 'exercise_frequency', 'property_type']:
+for col in ['sex','region','exercise','coverage_level']:
     df[col] = label_encoder.fit_transform(df[col])
 
 print(df.head()) # Verificando a transformação
 
+# Matriz de correlação
+plt.figure(figsize=(12, 8))
+correlation_matrix = df.corr()
+sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm', fmt=".2f")
+plt.title('Matriz de Correlação')
+plt.show()
+
 # Dividir os dados em variáveis features (x) e target (y)
-x = df.drop('premium_amount', axis=1)  # Dados de entrada - todas as colunas menos 'Premium Amount'
-y = df['premium_amount']  # A coluna 'Premium Amount' é o target, variável que queremos prever
+x = df.drop('charges', axis=1)  # Dados de entrada - todas as colunas menos 'charges'
+y = df['charges']  # A coluna 'Premium Amount' é o target, variável que queremos prever
 
 # Dividindo o conjunto de dados em treino e teste (80% treino, 20% teste)
 X_train, X_test, y_train, y_test= train_test_split(x, y, test_size=0.2, random_state=42)
 
-# Dados de treino - Normalizar os dados numéricos (colocar tudo na mesma escala — geralmente de 0 a 1)
-scaler = MinMaxScaler() # Inicializa o MinMaxScaler
-features = df.drop('premium_amount', axis=1).columns # Nome das colunas dos dados de entrada
-X_train_scaled = scaler.fit_transform(X_train)  # aprende (fit) e aplica (transform) no treino
-X_test_scaled = scaler.transform(X_test)        # aprende (fit) e aplica (transform) a mesma escala no teste
-df_scaled = scaler.fit_transform(df[features]) # Cria um novo DataFrame com os dados normalizados
+# == Regressão Linear == #
+model = LinearRegression()
+model.fit(X_train, y_train)  # Treinando o modelo com os dados de treino
 
-
-# Visualizando a matriz de correlação
-plt.figure(figsize=(20, 12))
-sns.heatmap(df.corr(), annot=True, cmap='coolwarm')
-plt.title('Matriz de correlação')
-plt.show()
-
-# Criando o modelo de regressão linear
-model = LinearRegression() 
-model.fit(X_train_scaled, y_train) # Treina o modelo com os dados de treino
 # Fazendo previsões com os dados de teste
-y_pred = model.predict(X_test_scaled) # Faz previsões com os dados de teste
-# Avaliando o modelo
-mae = mean_absolute_error(y_test, y_pred) # Erro médio absoluto
-mse = mean_squared_error(y_test, y_pred) # Erro médio quadrático
-rmse = np.sqrt(mse) # Raiz do erro médio quadrático
-r2 = r2_score(y_test, y_pred) # Coeficiente de determinação R²
-print(f'MAE: {mae}')
-print(f'MSE: {mse}')
-print(f'RMSE: {rmse}')
-print(f'R²: {r2}')
-# Visualizando os resultados
+y_pred = model.predict(X_test)
+
+# Avaliação do modelo
+mae = mean_absolute_error(y_test, y_pred)
+mse = mean_squared_error(y_test, y_pred)
+rmse = np.sqrt(mse)
+r2 = r2_score(y_test, y_pred)
+print("MAE:", mae)
+print("MSE:", mse)
+print("RMSE:", rmse)
+print("R2:", r2)
+
+# Visualização dos resultados
 plt.figure(figsize=(10, 6))
 plt.scatter(y_test, y_pred)
-plt.xlabel('Valores reais') 
-plt.ylabel('Valores previstos')
-plt.title('Valores reais vs Valores previstos')
-plt.plot([y.min(), y.max()], [y.min(), y.max()], 'r--') # linha vermelha
+plt.xlabel('Valores Reais')
+plt.ylabel('Valores Preditos')
+plt.title('Valores Reais vs Valores Preditos')
+plt.plot([y.min(), y.max()], [y.min(), y.max()], 'k--', lw=2)
+plt.show()
+
+# == KNN Regressor == #
+from sklearn.neighbors import KNeighborsRegressor
+
+# Criando o modelo KNN Regressor
+knn_model = KNeighborsRegressor(n_neighbors=5)
+
+# Treinando o modelo com os dados de treino
+knn_model.fit(X_train, y_train)
+
+# Fazendo previsões com os dados de teste
+y_pred_knn = knn_model.predict(X_test)
+
+# Avaliação do modelo
+mae_knn = mean_absolute_error(y_test, y_pred_knn)
+mse_knn = mean_squared_error(y_test, y_pred_knn)
+rmse_knn = np.sqrt(mse_knn)
+r2_knn = r2_score(y_test, y_pred_knn)
+print("MAE KNN:", mae_knn)
+print("MSE KNN:", mse_knn)
+print("RMSE KNN:", rmse_knn)
+print("R2 KNN:", r2_knn)
+
+# Visualização dos resultados
+plt.figure(figsize=(10, 6))
+plt.scatter(y_test, y_pred_knn)
+plt.xlabel('Valores Reais')
+plt.ylabel('Valores Preditos')
+plt.title('Valores Reais vs Valores Preditos KNN')
+plt.plot([y.min(), y.max()], [y.min(), y.max()], 'k--', lw=2)
+plt.show()
+
+
+# == Decision Tree Regressor == #
+from sklearn.tree import DecisionTreeRegressor
+
+# Criando o modelo Decision Tree Regressor
+dt_model = DecisionTreeRegressor(random_state=42)
+
+# Treinando o modelo com os dados de treino
+dt_model.fit(X_train, y_train)
+
+# Fazendo previsões com os dados de teste
+y_pred_dt = dt_model.predict(X_test)
+
+# Avaliação do modelo
+mae_dt = mean_absolute_error(y_test, y_pred_dt)
+mse_dt = mean_squared_error(y_test, y_pred_dt)
+rmse_dt = np.sqrt(mse_dt)
+r2_dt = r2_score(y_test, y_pred_dt)
+print("MAE Decision Tree:", mae_dt)
+print("MSE Decision Tree:", mse_dt)
+print("RMSE Decision Tree:", rmse_dt)
+print("R2 Decision Tree:", r2_dt)
+
+# Visualização dos resultados
+plt.figure(figsize=(10, 6))
+plt.scatter(y_test, y_pred_dt)
+plt.xlabel('Valores Reais')
+plt.ylabel('Valores Preditos')
+plt.title('Valores Reais vs Valores Preditos Decision Tree')
+plt.plot([y.min(), y.max()], [y.min(), y.max()], 'k--', lw=2)
+plt.show()
+
+# == Random Forest Regressor == #
+from sklearn.ensemble import RandomForestRegressor
+# Criando o modelo Random Forest Regressor
+rf_model = RandomForestRegressor(n_estimators=100, random_state=42)
+# Treinando o modelo com os dados de treino
+rf_model.fit(X_train, y_train)
+# Fazendo previsões com os dados de teste
+y_pred_rf = rf_model.predict(X_test)
+# Avaliação do modelo
+mae_rf = mean_absolute_error(y_test, y_pred_rf)
+mse_rf = mean_squared_error(y_test, y_pred_rf)
+rmse_rf = np.sqrt(mse_rf)
+r2_rf = r2_score(y_test, y_pred_rf)
+print("MAE Random Forest:", mae_rf)
+print("MSE Random Forest:", mse_rf)
+print("RMSE Random Forest:", rmse_rf)
+print("R2 Random Forest:", r2_rf)
+# Visualização dos resultados
+plt.figure(figsize=(10, 6))
+plt.scatter(y_test, y_pred_rf)
+plt.xlabel('Valores Reais')
+plt.ylabel('Valores Preditos')
+plt.title('Valores Reais vs Valores Preditos Random Forest')
+plt.plot([y.min(), y.max()], [y.min(), y.max()], 'k--', lw=2)
 plt.show()
