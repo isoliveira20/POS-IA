@@ -35,6 +35,7 @@ EDUCATION = 'education'
 MARITAL_STATUS = 'marital_status'
 CHARGES = 'charges'
 SALUBRITY = 'salubrity'
+USE_LAST_YEAR = 'use_last_year'
 
 # ==============================================
 # GERAR VARIÁVEIS BASE
@@ -42,8 +43,8 @@ SALUBRITY = 'salubrity'
 
 def generate_age(n_samples):
     from scipy.stats import truncnorm
-    lower, upper = 18, 80
-    mu, sigma = 40, 15
+    lower, upper = 15, 90
+    mu, sigma = 35, 20
     a, b = (lower - mu) / sigma, (upper - mu) / sigma
     return truncnorm.rvs(a, b, loc=mu, scale=sigma, size=n_samples).astype(int)
 
@@ -148,17 +149,17 @@ def generate_bmi(age_array, region_array, exercise_array):
             loc, scale, a = 27, 5, 3
 
         bmi_factor_by_region = {
-            'north': -1.5,
-            'northeast': -1.0,
+            'north': -0.5,
+            'northeast': -0.3,
             'southeast': 0.0,
-            'south': 0.5,
-            'central_west': -0.5
+            'south': 0.3,
+            'central_west': -0.2
         }
         bmi_adjustment_by_exercise = {
-            'sedentary': 1.5,
-            'light': 0.5,
-            'moderate': -0.5,
-            'active': -1.5
+            'sedentary': 3.0,
+            'light': 1.5,
+            'moderate': -1.5,
+            'active': -3.0
         }
         base_loc = loc + bmi_factor_by_region.get(region, 0) + bmi_adjustment_by_exercise.get(exercise_frequency, 0)
         bmi_raw = skewnorm.rvs(a, loc=base_loc, scale=scale)
@@ -171,40 +172,39 @@ def generate_smoker(age_array, sex_array):
     for age, sex in zip(age_array, sex_array):
         if sex == 'male':
             if age < 25:
-                p = 0.10
+                p = 0.15
+            elif age < 40:
+                p = 0.40
+            elif age < 60:
+                p = 0.35
+            else:
+                p = 0.20
+        else:
+            if age < 25:
+                p = 0.12
             elif age < 40:
                 p = 0.15
             elif age < 60:
-                p = 0.20
+                p = 0.18
             else:
-                p = 0.12
-        else:
-            if age < 25:
-                p = 0.07
-            elif age < 40:
-                p = 0.08
-            elif age < 60:
                 p = 0.10
-            else:
-                p = 0.06
         result.append(np.random.binomial(1, p))
     return np.array(result)
 
 
-def generate_chronic_condition(age_array):
+def generate_chronic_condition_v2(age_array):
     result = []
     for age in age_array:
         if age < 30:
-            p = 0.05
+            p = [0.90, 0.08, 0.02]  # 90% sem doença, 8% leve, 2% moderada+
         elif age < 50:
-            p = 0.15
+            p = [0.75, 0.2, 0.05]
         elif age < 65:
-            p = 0.30
+            p = [0.55, 0.3, 0.15]
         else:
-            p = 0.50
-        result.append(np.random.binomial(1, p))
+            p = [0.35, 0.4, 0.25]
+        result.append(np.random.choice([0, 1, 2], p=p))
     return np.array(result)
-
 
 def generate_alcohol_consumption(age_array, sex_array, income_array, region_array):
     result = []
@@ -549,6 +549,29 @@ def generate_num_dependents_older(df):
 
     return pd.Series(result, index=df.index)
 
+def generate_plan_usage_frequency(df) -> pd.Series:
+    usage = []
+
+    for age in df["age"]:
+        if age <= 18:
+            mean = 1.5
+        elif age <= 29:
+            mean = 2.0
+        elif age <= 39:
+            mean = 2.5
+        elif age <= 49:
+            mean = 3.5
+        elif age <= 59:
+            mean = 4.5
+        elif age <= 69:
+            mean = 6.5
+        else:
+            mean = 8.0
+
+        freq = np.random.poisson(mean)
+        usage.append(min(freq, 20)) 
+
+    return pd.Series(usage, index=df.index, name="plan_usage_last_year")
 
 def generate_coverage_level(income_array, age_array):
     result = []
@@ -664,7 +687,7 @@ def generate_base_data(n_samples):
     bmi = generate_bmi(age, region, exercise_frequency)
     marital_status = generate_marital_status(age)
     smoker = generate_smoker(age, sex)
-    chronic_condition = generate_chronic_condition(age)
+    chronic_condition = generate_chronic_condition_v2(age)
     #alcohol_consumption = generate_alcohol_consumption(age, sex, income, region)
     #diet_quality = generate_diet_quality(income)
     #occupation_risk = generate_occupation_risk(age, region, income, sex)
@@ -715,7 +738,6 @@ def update_num_to_cat(df):
 # ==============================================
 # GERAR TARGET (CHARGES)
 # ==============================================
-
 def generate_target(df):
     marital_factor = {
         'single': 1.1,
@@ -736,14 +758,14 @@ def generate_target(df):
 
     base = 200
 
-    charges = (
+    charges = ((
+
         base
         + 80 * df[AGE] ** 1.5
-        + 3000 * df[SMOKER].fillna(0)
-        + 1200 * df[CHRONIC_CONDITION].fillna(0) ** 2
-        + 500 * df[NUM_DEPENDENTS_KIDS].fillna(0)
-        + 800 * df[NUM_DEPENDENTS_ADULT].fillna(0)
-        + 1300 * df[NUM_DEPENDENTS_OLDER].fillna(0)
+        + 5000 * df[SMOKER].fillna(0)  # maior peso para fumantes
+        + 1500 * df[CHRONIC_CONDITION].fillna(0) ** 1.5
+        + 800 * df[NUM_DEPENDENTS_ADULT].fillna(0) * 12
+        + 1500 * df[NUM_DEPENDENTS_OLDER].fillna(0) * 12
         + 15 * np.abs(df[BMI].fillna(25) - 25) ** 0.5
         - 200 * df[EXERCISE_FREQUENCY].map({
             'sedentary': 0,
@@ -751,21 +773,23 @@ def generate_target(df):
             'moderate': 2,
             'active': 3
         }).fillna(0)
-        + 50 * df[ALCOHOL_CONSUMPTION].fillna(0)
+        + 30 * df[ALCOHOL_CONSUMPTION].fillna(0)
         + 0.05 * df[GENETIC_RISK].fillna(df[GENETIC_RISK].median()) * df[AGE]
-        + 0.0004 * df[REGION].map(regional_cost).fillna(1)
-        + 5 * df[OCCUPATION_RISK].fillna(1)
+        + 0.0002 * df[INCOME] * df[REGION].map(regional_cost).fillna(1)  # se quiser manter leve influência de renda
+        + 100 * df[OCCUPATION_RISK].fillna(1)
+        + 100 * df[USE_LAST_YEAR].fillna(0)
+
+    ) * (1 + 0.55 * df[NUM_DEPENDENTS_KIDS].fillna(0))  # percentual por criança
     )
 
     charges *= df[COVERAGE_LEVEL].map(coverage_map).fillna(1)
     charges *= df[MARITAL_STATUS].map(marital_factor).fillna(1)
 
-    # Ruído e finalização
+    # Ruído proporcional à idade
     noise = np.random.normal(0, 500 + df[AGE] * 10)
     charges += noise
-    charges = np.clip(charges, 500, 50000).astype(int)
 
-    return np.clip(charges, 500, 50000).astype(int)
+    return np.clip(charges, 500, 60000).astype(int)
 
 # ==============================================
 # VALORES AUSENTES
@@ -945,6 +969,7 @@ if __name__ == "__main__":
     df[NUM_DEPENDENTS_OLDER] = generate_num_dependents_older(df)
     df[COVERAGE_LEVEL] = generate_coverage_level_v2(df)
     df[GENETIC_RISK] = generate_genetic_risk_v2(df)
+    df[USE_LAST_YEAR] = generate_plan_usage_frequency(df)
     df[CHARGES] = generate_target(df)
     df = update_num_to_cat(df)
 
