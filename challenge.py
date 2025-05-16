@@ -28,9 +28,9 @@ print(df.columns)      # Lista os nomes das colunas
 print(df.isnull().sum()) # imprime a soma de valores nulos por coluna
 
 #tratamento de valores nulos
-df['genetic_risk'] = df['genetic_risk'].fillna(df['genetic_risk'].mean())
-df['alcohol_consumption'] = df['alcohol_consumption'].fillna(df['alcohol_consumption'].median())
-df['diet'] = df['diet'].fillna(df['diet'].mode()[0])
+df['bmi'] = df['bmi'].fillna(df['bmi'].mode())
+df['alcohol_consumption'] = df['alcohol_consumption'].fillna(df['alcohol_consumption'].mode())
+df['diet_quality'] = df['diet_quality'].fillna(df['diet_quality'].mode()[0])
 
 #Verifica se ainda existem valores nulos
 print(df.isnull().sum()) # imprime a soma de valores nulos por coluna
@@ -44,7 +44,7 @@ print(df.duplicated().sum()) #imprime a soma de valores duplicados por coluna
 
 # Tratamento de variáveis categóricas p/ numéricas usando LabelEncoder
 label_encoder = LabelEncoder()
-for col in ['sex','region','exercise','coverage_level']:
+for col in ['sex','region','exercise_frequency','bmi','marital_status', 'alcohol_consumption','diet_quality','occupation_risk','coverage_level','genetic_risk','education']:
     df[col] = label_encoder.fit_transform(df[col])
 
 print(df.head()) # Verificando a transformação
@@ -195,3 +195,22 @@ print("MAE Lasso:", mae_lasso)
 print("MSE Lasso:", mse_lasso)
 print("RMSE Lasso:", rmse_lasso)
 print("R2 Lasso:", r2_lasso)
+
+#xgboost
+from xgboost import XGBRegressor
+# Criando o modelo XGBoost Regressor
+xgb_model = XGBRegressor(n_estimators=100, random_state=42)
+# Treinando o modelo com os dados de treino
+xgb_model.fit(X_train, y_train)
+# Fazendo previsões com os dados de teste
+y_pred_xgb = xgb_model.predict(X_test)
+# Avaliação do modelo
+mae_xgb = mean_absolute_error(y_test, y_pred_xgb)
+mse_xgb = mean_squared_error(y_test, y_pred_xgb)
+rmse_xgb = np.sqrt(mse_xgb)
+r2_xgb = r2_score(y_test, y_pred_xgb)
+print("MAE XGBoost:", mae_xgb)
+print("MSE XGBoost:", mse_xgb)
+print("RMSE XGBoost:", rmse_xgb)
+print("R2 XGBoost:", r2_xgb)
+
