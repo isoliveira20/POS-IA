@@ -12,7 +12,7 @@ from sklearn.impute import SimpleImputer
 
 
 #Exploração de dados:
-pd.set_option('display.max_columns', None)
+#pd.set_option('display.max_columns', None)
 
 #Carregamento da base de dados e exploração das suas características
 df = pd.read_csv('health_insurance_dataset.csv')
@@ -22,7 +22,7 @@ print(df.shape)  # Verifica quantas linhas e colunas tem
 
 print(df.info())       # Tipos de dados e colunas nulas
 print(df.describe())   # Estatísticas para colunas numéricas
-print(df.columns)      # Lista os nomes das colunas
+
 
 #Valores nulos
 print(df.isnull().sum()) # imprime a soma de valores nulos por coluna
@@ -58,7 +58,7 @@ plt.show()
 
 # Dividir os dados em variáveis features (x) e target (y)
 x = df.drop('charges', axis=1)  # Dados de entrada - todas as colunas menos 'charges'
-y = df['charges']  # A coluna 'Premium Amount' é o target, variável que queremos prever
+y = df['charges']  # A coluna 'charges' é o target, variável que queremos prever
 
 # Dividindo o conjunto de dados em treino e teste (80% treino, 20% teste)
 X_train, X_test, y_train, y_test= train_test_split(x, y, test_size=0.2, random_state=42)
