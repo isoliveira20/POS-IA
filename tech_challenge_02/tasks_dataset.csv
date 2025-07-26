@@ -1,51 +1,142 @@
 name,type,type_multiplier,priority,priority_multiplier,stack,estimated_hours,complexity_points
-Task_1,Bug,1.5,High,1.0,BE,2,1
-Task_2,Critical Bug,2.5,Disaster,2.0,BE,26,8
-Task_3,Planned Task,1.0,High,1.0,DS,15,3
-Task_4,Unplanned Task,1.25,Medium,0.5,MO,5,1
-Task_5,Technical Debt,1.25,Medium,0.5,MO,9,2
-Task_6,Spike,1.0,Low,0.25,FE,3,1
-Task_7,Critical Bug,2.5,Critical,1.5,FE,17,5
-Task_8,Bug,1.5,Medium,0.5,DE,29,8
-Task_9,Planned Task,1.0,High,1.0,DB,19,8
-Task_10,Bug,1.5,Critical,1.5,BE,3,1
-Task_11,Planned Task,1.0,Low,0.25,DB,4,2
-Task_12,Bug,1.5,Critical,1.5,BE,16,5
-Task_13,Technical Debt,1.25,Medium,0.5,MO,8,3
-Task_14,Planned Task,1.0,Medium,0.5,DB,21,8
-Task_15,Bug,1.5,Critical,1.5,BE,20,5
-Task_16,Critical Bug,2.5,Critical,1.5,FE,3,2
-Task_17,Planned Task,1.0,Medium,0.5,DE,4,2
-Task_18,Planned Task,1.0,Low,0.25,FE,6,3
-Task_19,Unplanned Task,1.25,Low,0.25,DE,1,1
-Task_20,Spike,1.0,Low,0.25,BE,9,3
-Task_21,Planned Task,1.0,Low,0.25,MO,28,5
-Task_22,Technical Debt,1.25,Low,0.25,MO,15,5
-Task_23,Planned Task,1.0,Low,0.25,MO,9,2
-Task_24,Planned Task,1.0,High,1.0,DE,6,2
-Task_25,Planned Task,1.0,Medium,0.5,BE,12,3
-Task_26,Planned Task,1.0,Low,0.25,FE,22,8
-Task_27,Planned Task,1.0,High,1.0,BE,9,3
-Task_28,Critical Bug,2.5,Disaster,2.0,DS,10,2
-Task_29,Critical Bug,2.5,Critical,1.5,BE,14,5
-Task_30,Planned Task,1.0,Medium,0.5,DE,8,3
-Task_31,Planned Task,1.0,Low,0.25,DB,8,3
-Task_32,Spike,1.0,Medium,0.5,MO,14,3
-Task_33,Technical Debt,1.25,Medium,0.5,DB,6,2
-Task_34,Planned Task,1.0,Low,0.25,DE,16,5
-Task_35,Unplanned Task,1.25,Medium,0.5,FE,1,1
-Task_36,Planned Task,1.0,Low,0.25,DB,3,1
-Task_37,Planned Task,1.0,Medium,0.5,DS,6,2
-Task_38,Planned Task,1.0,Low,0.25,BE,30,8
-Task_39,Planned Task,1.0,High,1.0,DE,2,1
-Task_40,Bug,1.5,High,1.0,FE,16,5
-Task_41,Critical Bug,2.5,Critical,1.5,DE,19,8
-Task_42,Bug,1.5,Critical,1.5,BE,8,2
-Task_43,Planned Task,1.0,Medium,0.5,DS,41,8
-Task_44,Planned Task,1.0,Medium,0.5,DB,3,1
+Task_1,Bug,1.5,Critical,1.5,DB,20,8
+Task_2,Critical Bug,2.5,Disaster,2.0,BE,4,1
+Task_3,Planned Task,1.0,Low,0.25,FE,13,8
+Task_4,Unplanned Task,1.25,Medium,0.5,DS,3,1
+Task_5,Technical Debt,1.25,Low,0.25,FE,7,3
+Task_6,Spike,1.0,Low,0.25,FE,9,5
+Task_7,Planned Task,1.0,High,1.0,DB,9,3
+Task_8,Planned Task,1.0,High,1.0,DE,13,5
+Task_9,Spike,1.0,Medium,0.5,MO,12,3
+Task_10,Bug,1.5,High,1.0,BE,8,2
+Task_11,Bug,1.5,Critical,1.5,MO,43,8
+Task_12,Spike,1.0,Low,0.25,MO,16,3
+Task_13,Bug,1.5,High,1.0,FE,7,3
+Task_14,Planned Task,1.0,High,1.0,FE,9,3
+Task_15,Unplanned Task,1.25,High,1.0,DB,21,8
+Task_16,Technical Debt,1.25,Low,0.25,MO,2,1
+Task_17,Unplanned Task,1.25,Low,0.25,FE,9,5
+Task_18,Planned Task,1.0,Medium,0.5,FE,5,3
+Task_19,Planned Task,1.0,High,1.0,BE,2,1
+Task_20,Planned Task,1.0,Medium,0.5,BE,4,2
+Task_21,Planned Task,1.0,Medium,0.5,BE,25,8
+Task_22,Spike,1.0,Low,0.25,BE,14,5
+Task_23,Planned Task,1.0,High,1.0,DB,15,8
+Task_24,Planned Task,1.0,High,1.0,DS,5,1
+Task_25,Planned Task,1.0,Medium,0.5,BE,17,5
+Task_26,Critical Bug,2.5,Disaster,2.0,MO,12,3
+Task_27,Bug,1.5,High,1.0,BE,6,2
+Task_28,Bug,1.5,Critical,1.5,BE,11,3
+Task_29,Planned Task,1.0,Medium,0.5,BE,6,3
+Task_30,Technical Debt,1.25,Medium,0.5,FE,15,5
+Task_31,Planned Task,1.0,Low,0.25,DB,27,8
+Task_32,Technical Debt,1.25,Low,0.25,FE,14,5
+Task_33,Spike,1.0,Medium,0.5,BE,32,8
+Task_34,Critical Bug,2.5,Disaster,2.0,BE,7,2
+Task_35,Bug,1.5,High,1.0,FE,3,2
+Task_36,Bug,1.5,High,1.0,BE,3,1
+Task_37,Critical Bug,2.5,Disaster,2.0,BE,8,3
+Task_38,Bug,1.5,Critical,1.5,FE,4,2
+Task_39,Planned Task,1.0,Medium,0.5,BE,4,2
+Task_40,Planned Task,1.0,Low,0.25,BE,20,8
+Task_41,Planned Task,1.0,Medium,0.5,DS,20,8
+Task_42,Spike,1.0,Low,0.25,FE,16,5
+Task_43,Technical Debt,1.25,Low,0.25,MO,8,3
+Task_44,Planned Task,1.0,High,1.0,DB,17,5
 Task_45,Planned Task,1.0,Medium,0.5,DS,10,2
-Task_46,Planned Task,1.0,High,1.0,BE,2,1
-Task_47,Planned Task,1.0,Low,0.25,DE,9,5
-Task_48,Unplanned Task,1.25,High,1.0,FE,11,5
-Task_49,Unplanned Task,1.25,High,1.0,FE,12,5
-Task_50,Technical Debt,1.25,Medium,0.5,FE,11,5
+Task_46,Planned Task,1.0,High,1.0,DE,7,2
+Task_47,Planned Task,1.0,High,1.0,BE,17,8
+Task_48,Planned Task,1.0,High,1.0,FE,5,3
+Task_49,Planned Task,1.0,Low,0.25,DS,33,8
+Task_50,Technical Debt,1.25,Low,0.25,BE,8,2
+Task_51,Bug,1.5,Critical,1.5,DE,26,8
+Task_52,Bug,1.5,Medium,0.5,MO,29,8
+Task_53,Planned Task,1.0,High,1.0,BE,14,5
+Task_54,Spike,1.0,Medium,0.5,BE,3,1
+Task_55,Planned Task,1.0,Low,0.25,DS,18,5
+Task_56,Bug,1.5,Medium,0.5,BE,16,8
+Task_57,Bug,1.5,Critical,1.5,BE,8,2
+Task_58,Planned Task,1.0,Medium,0.5,BE,7,3
+Task_59,Planned Task,1.0,Low,0.25,DB,10,5
+Task_60,Planned Task,1.0,High,1.0,FE,2,1
+Task_61,Critical Bug,2.5,Critical,1.5,DE,11,3
+Task_62,Spike,1.0,Low,0.25,MO,30,8
+Task_63,Planned Task,1.0,Medium,0.5,MO,5,1
+Task_64,Technical Debt,1.25,Medium,0.5,FE,1,1
+Task_65,Planned Task,1.0,Low,0.25,DS,13,3
+Task_66,Planned Task,1.0,High,1.0,DB,27,8
+Task_67,Planned Task,1.0,Medium,0.5,FE,1,1
+Task_68,Critical Bug,2.5,Critical,1.5,DB,28,8
+Task_69,Planned Task,1.0,Low,0.25,DB,9,3
+Task_70,Bug,1.5,High,1.0,BE,19,8
+Task_71,Bug,1.5,Critical,1.5,FE,4,2
+Task_72,Unplanned Task,1.25,High,1.0,DS,9,2
+Task_73,Unplanned Task,1.25,Low,0.25,FE,4,2
+Task_74,Planned Task,1.0,Medium,0.5,BE,10,3
+Task_75,Technical Debt,1.25,Low,0.25,BE,27,8
+Task_76,Planned Task,1.0,Low,0.25,BE,7,2
+Task_77,Planned Task,1.0,Medium,0.5,DE,12,5
+Task_78,Bug,1.5,Medium,0.5,BE,6,3
+Task_79,Planned Task,1.0,High,1.0,DE,15,8
+Task_80,Spike,1.0,Low,0.25,DS,3,1
+Task_81,Planned Task,1.0,Medium,0.5,DB,2,1
+Task_82,Technical Debt,1.25,Low,0.25,DS,9,2
+Task_83,Planned Task,1.0,Medium,0.5,DE,10,5
+Task_84,Planned Task,1.0,High,1.0,FE,6,2
+Task_85,Planned Task,1.0,High,1.0,FE,9,3
+Task_86,Critical Bug,2.5,Disaster,2.0,FE,7,3
+Task_87,Technical Debt,1.25,Low,0.25,BE,2,1
+Task_88,Spike,1.0,Medium,0.5,MO,7,2
+Task_89,Unplanned Task,1.25,Low,0.25,MO,8,2
+Task_90,Unplanned Task,1.25,Medium,0.5,FE,22,8
+Task_91,Critical Bug,2.5,Critical,1.5,BE,19,8
+Task_92,Technical Debt,1.25,Low,0.25,DB,5,2
+Task_93,Planned Task,1.0,Medium,0.5,MO,8,2
+Task_94,Planned Task,1.0,Medium,0.5,FE,8,3
+Task_95,Unplanned Task,1.25,Low,0.25,BE,10,3
+Task_96,Critical Bug,2.5,Critical,1.5,FE,27,8
+Task_97,Technical Debt,1.25,Medium,0.5,BE,7,2
+Task_98,Planned Task,1.0,Low,0.25,MO,4,1
+Task_99,Bug,1.5,High,1.0,BE,2,1
+Task_100,Planned Task,1.0,Low,0.25,DS,5,1
+Task_101,Planned Task,1.0,High,1.0,DE,2,1
+Task_102,Planned Task,1.0,Medium,0.5,FE,13,8
+Task_103,Technical Debt,1.25,Medium,0.5,MO,4,1
+Task_104,Planned Task,1.0,High,1.0,BE,17,8
+Task_105,Critical Bug,2.5,Critical,1.5,DB,1,1
+Task_106,Unplanned Task,1.25,High,1.0,BE,12,3
+Task_107,Planned Task,1.0,Low,0.25,FE,23,8
+Task_108,Technical Debt,1.25,Medium,0.5,BE,4,2
+Task_109,Planned Task,1.0,High,1.0,FE,10,3
+Task_110,Planned Task,1.0,High,1.0,FE,2,1
+Task_111,Planned Task,1.0,Medium,0.5,MO,8,2
+Task_112,Bug,1.5,Medium,0.5,BE,10,3
+Task_113,Unplanned Task,1.25,Low,0.25,MO,21,5
+Task_114,Unplanned Task,1.25,Low,0.25,BE,16,8
+Task_115,Bug,1.5,High,1.0,DB,9,5
+Task_116,Bug,1.5,Medium,0.5,BE,7,2
+Task_117,Technical Debt,1.25,Low,0.25,DB,5,2
+Task_118,Planned Task,1.0,Medium,0.5,BE,21,8
+Task_119,Planned Task,1.0,Medium,0.5,MO,2,1
+Task_120,Planned Task,1.0,High,1.0,BE,18,5
+Task_121,Unplanned Task,1.25,Medium,0.5,DE,3,1
+Task_122,Planned Task,1.0,Medium,0.5,BE,23,8
+Task_123,Spike,1.0,Medium,0.5,DB,7,2
+Task_124,Critical Bug,2.5,Critical,1.5,BE,28,8
+Task_125,Planned Task,1.0,Medium,0.5,FE,13,5
+Task_126,Bug,1.5,High,1.0,BE,6,2
+Task_127,Technical Debt,1.25,Medium,0.5,DE,13,5
+Task_128,Planned Task,1.0,Low,0.25,FE,4,2
+Task_129,Planned Task,1.0,High,1.0,DB,5,3
+Task_130,Bug,1.5,High,1.0,BE,11,3
+Task_131,Planned Task,1.0,Low,0.25,DS,2,1
+Task_132,Planned Task,1.0,Low,0.25,DS,2,1
+Task_133,Planned Task,1.0,High,1.0,BE,5,2
+Task_134,Planned Task,1.0,High,1.0,BE,5,2
+Task_135,Critical Bug,2.5,Disaster,2.0,BE,23,8
+Task_136,Spike,1.0,Medium,0.5,BE,9,3
+Task_137,Planned Task,1.0,Medium,0.5,BE,5,2
+Task_138,Critical Bug,2.5,Disaster,2.0,BE,12,5
+Task_139,Critical Bug,2.5,Disaster,2.0,BE,26,8
+Task_140,Planned Task,1.0,Medium,0.5,DS,35,8
+Task_141,Bug,1.5,Medium,0.5,DS,36,8
