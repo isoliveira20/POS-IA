@@ -545,4 +545,6 @@ analyze_team_composition(df_teams)
 # Visualizações
 create_visualization(df_teams)
 
+# Salvar resultados em CSV
+print("\nSalvando resultados em 'balanced_teams.csv'...")
 df_teams.to_csv('balanced_teams.csv', index=False)
