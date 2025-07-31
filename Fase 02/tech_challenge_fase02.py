@@ -4,9 +4,14 @@ import random
 import matplotlib.pyplot as plt
 from collections import defaultdict, Counter
 
+#Carregar os dados
+tasks_df = pd.read_csv('/Users/izabela.oliveira/Documents/GitHub/POS-IA/Iza/tasks_dataset.csv')
+teams_df = pd.read_csv('/Users/izabela.oliveira/Documents/GitHub/POS-IA/Iza/teams_dataset.csv')
+
+
 num_generations = 100
 mutation_rate = 0.05
-population_size = 50
+population_size = len(tasks_df)
 sprint_days = 10
 max_no_improve = 20
 no_improve = 0
@@ -28,20 +33,6 @@ level_rules = {
 
 priority_weight = {'Disaster': 5, 'Critical': 4, 'High':3, 'Medium':2, 'Low':1}
 
-# Carregando datasets
-teams_df = pd.read_csv('teams_dataset.csv')
-# print("Equipes:")
-# print(teams_df.head())
-
-tasks_df = pd.read_csv('tasks_dataset.csv')
-# print("\Tasks:")
-# print(tasks_df.head())
-
-# print("\nInformações Equipes:")
-# print(teams_df.info())
-
-# print("\nInformações Tasks:")
-# print(tasks_df.info())
 
 developers = teams_df['name'].tolist()
 
@@ -200,7 +191,7 @@ def mutate_balanced(chromosome, developers, teams_df, tasks_df, mutation_rate=0.
             task_hours = tasks_df.iloc[i]['estimated_hours']
             compatible_devs = [dev for dev in developers if teams_df.loc[teams_df['name'] == dev, 'stack'].values[0] == task_stack]
             if compatible_devs:
-                # escolhe entre compatibles o de menor carga
+                # ecolhe entre compatibles o de menor carga
                 assigned_dev = min(compatible_devs, key=lambda d: dev_hours[d])
                 dev_hours[assigned_dev] += task_hours
                 dev_hours[chromosome[i]] -= task_hours
@@ -222,9 +213,12 @@ def print_dev_load(chromosome, tasks_df):
     for task_idx, dev in enumerate(chromosome):
         dev_hours[dev] += tasks_df.iloc[task_idx]['estimated_hours']
 
+    dev_hours = sorted(dev_hours.items(), key=lambda x: x[0], reverse=False)
     print("Carga horária por desenvolvedor:")
-    for dev, hours in dev_hours.items():
-        print(f"{dev}: {hours:.2f}h")
+    for dev, hours in dev_hours:
+        dev_info = teams_df[teams_df['name'] == dev].iloc[0]
+        tasks = filter_tasks_per_dev(chromosome, dev)
+        print(f"{dev}: {hours:.2f}h ({tasks} tasks) - {dev_info['level']} ({dev_info['stack']})")
 
 def check_compatibility(chromosome, tasks_df, teams_df):
     incompatibilities = []
@@ -248,6 +242,13 @@ def tasks_per_dev(chromosome):
         print(f"{dev}: {num}")
 
 
+def filter_tasks_per_dev(chromosome, dev):
+    count = Counter(chromosome)
+    tasks = 0
+    for d, num in count.items():
+        if d == dev:
+            tasks += num
+    return tasks
 
 population = generate_population(population_size, tasks_df, developers, teams_df)
 
@@ -314,7 +315,7 @@ print(best_solution)
 # Análises complementares
 print_dev_load(best_solution, tasks_df)
 check_compatibility(best_solution, tasks_df, teams_df)
-tasks_per_dev(best_solution)
+#tasks_per_dev(best_solution)
 
 plt.figure(figsize=(10,6))
 plt.plot(best_fitness_history, label='Melhor Fitness')
