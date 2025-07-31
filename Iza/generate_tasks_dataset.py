@@ -127,6 +127,7 @@ def generate_tasks_balanced_by_team(teams_df):
     tasks = []
     total_hours = 0
     idx = 0
+    fail_count = 0
 
     stacks_list = stacks
     complexity_list = complexity_scale
@@ -138,23 +139,26 @@ def generate_tasks_balanced_by_team(teams_df):
     included_stacks = set()
     included_complexities = set()
 
-    # Distribuição proporcional de horas por stack com base na quantidade de devs
     stack_counts = teams_df['stack'].value_counts().to_dict()
     total_devs = sum(stack_counts.values())
+
+    # Limite por stack com folga de 15%
     stack_hour_targets = {
-        stack: int(min_total_hours * (count / total_devs))
+        stack: int(min_total_hours * (count / total_devs) * 1.15)
         for stack, count in stack_counts.items()
     }
 
     stack_current_hours = {stack: 0 for stack in stacks_list}
 
     def add_task(stack, task_type, complexity_points, forced_priority=None):
-        nonlocal total_hours, idx
+        nonlocal total_hours, idx, fail_count
         task = create_task(idx, task_type, stack, complexity_points, forced_priority)
 
-        if max_total_hours is not None and (total_hours + task['estimated_hours'] > max_total_hours):
+        if total_hours + task['estimated_hours'] > max_total_hours:
+            fail_count += 1
             return False
         if stack_current_hours[stack] + task['estimated_hours'] > stack_hour_targets[stack]:
+            fail_count += 1
             return False
 
         tasks.append(task)
@@ -167,34 +171,30 @@ def generate_tasks_balanced_by_team(teams_df):
         idx += 1
         return True
 
-    # Garantir 1 de cada tipo
+    # Etapas de cobertura
     for task_type in types:
         stack = random.choice(list(stack_counts.keys()))
-        complexity = random.choice(complexity_list)
+        complexity = random.choices(complexity_list, weights=[1, 2, 3, 3, 5], k=1)[0]
         add_task(stack, task_type, complexity)
 
-    # Garantir prioridades ausentes
     missing_priorities = [p for p in priorities if p not in included_priorities]
     for priority in missing_priorities:
         possible_types = [t for t, plist in type_priority_map.items() if priority in plist]
-        if not possible_types:
-            continue
+        if not possible_types: continue
         task_type = random.choice(possible_types)
         stack = random.choice(list(stack_counts.keys()))
-        complexity = random.choice(complexity_list)
+        complexity = random.choices(complexity_list, weights=[1, 2, 3, 3, 5], k=1)[0]
         add_task(stack, task_type, complexity, forced_priority=priority)
 
-    # Garantir stacks ausentes
     missing_stacks = [s for s in stacks_list if s not in included_stacks]
     for stack in missing_stacks:
         task_type = random.choices(
             list(stack_type_weights[stack].keys()),
             weights=list(stack_type_weights[stack].values()), k=1
         )[0]
-        complexity = random.choice(complexity_list)
+        complexity = random.choices(complexity_list, weights=[1, 2, 3, 3, 5], k=1)[0]
         add_task(stack, task_type, complexity)
 
-    # Garantir complexidades ausentes
     missing_complexities = [c for c in complexity_list if c not in included_complexities]
     for complexity in missing_complexities:
         stack = random.choice(list(stack_counts.keys()))
@@ -204,7 +204,7 @@ def generate_tasks_balanced_by_team(teams_df):
         )[0]
         add_task(stack, task_type, complexity)
 
-    # Preencher até atingir o mínimo de horas
+    # Loop principal
     while total_hours < min_total_hours:
         stack = random.choices(
             list(stack_counts.keys()),
@@ -215,18 +215,39 @@ def generate_tasks_balanced_by_team(teams_df):
             list(stack_type_weights[stack].keys()),
             weights=list(stack_type_weights[stack].values()), k=1
         )[0]
-        complexity = random.choice(complexity_list)
+        complexity = random.choices(complexity_list, weights=[1, 2, 3, 3, 5], k=1)[0]
         added = add_task(stack, task_type, complexity)
         if not added:
             break
 
+    # Rodada extra se não bateu meta mínima
+    if total_hours < min_total_hours:
+        print("Rodada extra de redistribuição...")
+        for _ in range(100):
+            stack = random.choice(list(stack_counts.keys()))
+            task_type = random.choices(
+                list(stack_type_weights[stack].keys()),
+                weights=list(stack_type_weights[stack].values()), k=1
+            )[0]
+            complexity = random.choices(complexity_list, weights=[1, 2, 3, 3, 5], k=1)[0]
+            if add_task(stack, task_type, complexity) and total_hours >= min_total_hours:
+                break
+
+    print(f"Tentativas falhas: {fail_count}")
+    print(f"Horas geradas: {total_hours}")
     return pd.DataFrame(tasks)
-
-
-
 
 df_tasks = generate_tasks_balanced_by_team(teams_df)
 df_tasks.to_csv('/Users/izabela.oliveira/Documents/GitHub/POS-IA/Iza/tasks_dataset_.csv', index=False)
 
 print(df_tasks.groupby(['stack', 'type']).size().unstack(fill_value=0))
 print(df_tasks.groupby('stack')['estimated_hours'].sum())
+
+# Visualização gráfica
+plt.figure(figsize=(10, 4))
+sns.barplot(data=df_tasks, x='stack', y='estimated_hours', estimator=sum, ci=None)
+plt.title('Horas estimadas por stack')
+plt.ylabel('Horas')
+plt.xlabel('Stack')
+plt.tight_layout()
+plt.show()
