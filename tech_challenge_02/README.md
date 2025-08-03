@@ -1,31 +1,137 @@
-***Tech Challenge - Fase 02***
+## Tech Challenge - Fase 02
 - Izabela de Souza Oliveira - RM 364554
 - Thais Costa Tozatto - RM
 - Rafael Castro de Almeida - RM 
 
-**Problema:**
-- O problema proposto considera a utilização de Algoritmos Genéticos para otimizar a alocação de recursos de desenvolvimento de software, considerando os recursos humanos, horas por sprint, complexidade das tasks, priorização e senioridade do desenvolvedor.
+## Problema
+O problema proposto considera a utilização de **Algoritmos Genéticos (AG)** para otimizar a alocação de tarefas de desenvolvimento para equipes em sprints de 10 dias. O sistema considera múltiplas variáveis como compatibilidade de stack tecnológica, níveis de senioridade, prioridades das tarefas e balanceamento de carga de trabalho.
 
-**Algoritmo Genético**
-- Regras de negócio:
-  - *Escolha de pais por torneio*
-  - *População inicial diversificada:* geramos soluções iniciais usando três estratégias diferentes, incluindo priorizar tarefas críticas para devs mais experientes. O objetivo é ampliar a diversidade e melhorar a qualidade das soluções desde o início.
-  - *Função fitness aprimorada:* penalidades melhor ajustadas para sobrecarga, incompatibilidade e balanceamento entre níveis.
-  Reescalonamento dos pesos para resultados mais estáveis e na faixa adequada (centenas).
-  - *Busca local otimizada:* aplicamos somente nos 3 melhores indivíduos da geração para refinar soluções. Utilizamos a atualização incremental para não deixar lento, melhorando o balanceamento interno.
-  - *Mutação adaptativa e seleção mais seletiva:* taxa de mutação varia conforme a evolução, ajudando a escapar de mínimos locais. Torneio de seleção maior (k=7) para favorecer melhores soluções.
-  - *Injeção periódica de diversidade:* a cada 30 gerações, adiciona novos indivíduos aleatórios para evitar estagnação.
-  - *Correção inteligente de incompatibilidades:* corrigimos alocações incompatíveis priorizando devs menos sobrecarregados.
+## Objetivo geral 
+Encontrar a melhor distribuição de tarefas entre desenvolvedores, minimizando:
+- Sobrecarga de trabalho
+- Custos operacionais
+- Incompatibilidades técnicas
+- Desequilíbrio na distribuição de tarefas
 
-**Resultados:**
-- População inicial gerada com *198* soluções
+## Estrutura dos Dados
+### Datasets Utilizados
+- **`teams_dataset.csv`**: Informações dos desenvolvedores (nome, nível, stack)
+- **`tasks_dataset.csv`**: Detalhes das tarefas (stack, prioridade, horas estimadas)
+
+### Níveis de Desenvolvedores
+| Nível | Multiplicador de Custo | Horas Máx/Dia | Tolerância Sobrecarga | Penalidade |
+|-------|------------------------|----------------|----------------------|------------|
+| Intern | 0.5x | 5h | 0h | 1000x |
+| Junior | 0.75x | 7h | 2h | 500x |
+| Mid-level | 1.0x | 7h | 5h | 200x |
+| Senior | 1.25x | 7h | 10h | 100x |
+| Specialist | 1.5x | 7h | 10h | 100x |
+
+### Prioridades das Tarefas
+- **Disaster**: Peso 5 (máxima prioridade)
+- **Critical**: Peso 4
+- **High**: Peso 3
+- **Medium**: Peso 2
+- **Low**: Peso 1 (menor prioridade)
+
+## Algoritmo Genético
+### Representação do Cromossomo
+Cada solução é representada como uma lista onde cada posição corresponde a uma tarefa e o valor indica qual desenvolvedor foi alocado:
+```
+[dev1, dev3, dev2, dev1, dev4, ...]
+ task1 task2 task3 task4 task5
+```
+
+### Geração da População Inicial
+Três estratégias combinadas para criar diversidade:
+
+1. **Prioritizada**: Aloca tarefas por ordem de prioridade
+2. **Balanceada**: Distribui baseada na carga atual dos desenvolvedores
+3. **Experiente**: Prioriza devs Senior/Specialist para tarefas críticas
+
+### Função de Fitness
+A função objetivo combina múltiplos critérios com pesos específicos:
+
+```python
+fitness = w_overload × sobrecarga + w_cost × custo_total + 
+          w_imbalance × desequilíbrio + w_distribution × distribuição + 
+          w_penalties × penalidades
+```
+
+**Pesos utilizados:**
+- Sobrecarga: 0.6
+- Custo: 0.08
+- Desequilíbrio: 0.4
+- Distribuição: 0.15
+- Penalidades base: 0.1
+
+### Operadores Genéticos
+
+#### Seleção
+- **Torneio**: Definição dos pais por torneio. Seleciona o melhor entre k=7 indivíduos aleatórios
+
+#### Crossover
+- **Two-point crossover**: Troca segmentos entre dois pontos
+- **Uniform crossover**: Escolhe aleatoriamente genes de cada pai
+
+#### Mutação Adaptativa
+- Taxa inicial: 5%
+- Taxa máxima: 50%
+- Aumenta automaticamente após 5 gerações sem melhoria
+- Estratégia balanceada: prioriza devs com menor carga
+
+### Busca Local
+Aplicada apenas aos 3 melhores indivíduos (elite):
+- **Swaps bidirecionais**: Troca tarefas entre devs compatíveis
+- **Busca incremental**: Otimização iterativa com controle de recursos
+
+### Elitismo e Diversidade
+- **Elite**: Top 3 soluções preservadas a cada geração
+- **Injeção de diversidade**: A cada 30 gerações, 10% da população é renovada
+- **Correção de incompatibilidades**: Garante que todos os genes sejam válidos
+
+## Parâmetros de Configuração
+
+```python
+num_generations = 300           # Número máximo de gerações
+population_size = len(tasks) × 2  # Tamanho da população
+sprint_days = 10               # Duração do sprint
+max_no_improve = 20            # Critério de parada por estagnação
+tournament_size = 7            # Tamanho do torneio
+elite_size = 3                 # Número de indivíduos preservados
+```
+
+## Métricas e Resultados
+
+### Resultados
+- População inicial gerada com **198** soluções
 - Fitness:
   - Melhor fitness: **797.46**
   - Fitness médio: **856.84**
   - Geração **184**
-  - *Parando por estagnação!*
 
-**Geração de equipes**
+### Critérios de Avaliação
+1. **Compatibilidade**: Todas as tarefas alocadas a devs com stack compatível
+2. **Balanceamento**: Distribuição equilibrada de horas de trabalho
+3. **Respeito aos limites**: Nenhum dev excede significativamente sua capacidade
+4. **Priorização**: Tarefas críticas recebem atenção adequada
+
+### Visualizações Geradas
+- Evolução do fitness ao longo das gerações
+- Distribuição de horas por desenvolvedor
+- Detalhamento de tarefas por dev (stack, prioridade, horas)
+
+## Conclusões
+A utilização de AG como meio para solução do problema de alocação de tarefas por sprint trouxe algumas vantagens:
+- **Otimização multi-objetivo**: Considerando múltiplos fatores simultaneamente
+- **Adaptabilidade**: Mutação adaptativa previnindo convergência prematura
+- **Robustez**: Correção automática de incompatibilidades
+- **Eficiência**: Busca local acelerou convergência
+- **Flexibilidade**: Facilmente customizável para diferentes cenários
+Todos essas vantagens nos permitiram ajustar e customizar os parâmetros conforme os testes foram realizados, até chegarmos em uma solução realista e satisfatório.
+
+-----------------
+## Geração de equipes
 - Regras de negócio:
   - Experiência selecionada por peso/probabilidade.
   - Máximo 2 especialistas por equipe, no máximo 1 especialista por stack.
@@ -35,7 +141,7 @@
   - Maioria Backend no time.
   - Diversidade mínima de stacks ajustada ao tamanho da equipe (mínimo 2 para equipes pequenas, mínimo 3 para médias e maior para times grandes).
 
-**Resultados**
+### Resultados
 - Formação de 7 equipes multidisciplinares
 - Total de desenvolvedores: **33**
 - BE Global: 18/33 (54.5%)
@@ -62,8 +168,8 @@
     - D: 4.4
     - E: 6.0
     - F: 6.0
-
-**Geração de tasks**
+--------------------
+## Geração de tasks
 - Regras de negócio:
   - Tipos de task distribuídos conforme perfil realista por stack (ex.: Backend tem mais bugs críticos, frontend mais tarefas planejadas).
   - Prioridades variadas, com maior incidência em prioridades média e alta.
@@ -72,7 +178,7 @@
   - Horas estimadas baseadas na complexidade e ajustadas por multiplicadores específicos para cada stack, refletindo diferenças de esforço entre áreas.
   - Pelo menos uma task de cada tipo, prioridade, stack e complexidade para assegurar diversidade no conjunto.
 
-**Resultados**
+### Resultados
 - min_total_hours: **2270**
 - Stack BE: mínimo estimado de horas = 1240
 - Stack DB: mínimo estimado de horas = 70
