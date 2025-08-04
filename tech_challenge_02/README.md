@@ -1,7 +1,7 @@
 ## Tech Challenge - Fase 02
 - Izabela de Souza Oliveira - RM 364554
-- Thais Costa Tozatto - RM
-- Rafael Castro de Almeida - RM 
+- Thais Costa Tozatto - RM 
+- Rafael Castro de Almeida - RM 362308
 
 ## Problema
 O problema proposto considera a utilização de **Algoritmos Genéticos (AG)** para otimizar a alocação de tarefas de desenvolvimento para equipes em sprints de 10 dias. O sistema considera múltiplas variáveis como compatibilidade de stack tecnológica, níveis de senioridade, prioridades das tarefas e balanceamento de carga de trabalho.
