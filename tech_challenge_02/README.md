@@ -1,6 +1,6 @@
 ## Tech Challenge - Fase 02
 - Izabela de Souza Oliveira - RM 364554
-- Thais Costa Tozatto - RM 
+- Thais Costa Tozatto - RM 363288
 - Rafael Castro de Almeida - RM 362308
 
 ## Problema
@@ -82,7 +82,6 @@ fitness = w_overload × sobrecarga + w_cost × custo_total +
 
 ### Busca Local
 Aplicada apenas aos 3 melhores indivíduos (elite):
-- **Swaps bidirecionais**: Troca tarefas entre devs compatíveis
 - **Busca incremental**: Otimização iterativa com controle de recursos
 
 ### Elitismo e Diversidade
