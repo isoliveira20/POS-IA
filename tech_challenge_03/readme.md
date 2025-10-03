@@ -11,6 +11,14 @@ Como output, o modelo treinado deverá:
 
 O nosso grupo escolheu fazer o **Fine-tuning com Unsloth (Llama-3.2-3B-Instruct 4-bit)**.
 
+Inicialmente nós tentamos outras abordagens como o bert-base-uncased o google/flan-t5-small. Com o bert não tivemos sucesso devido as limitações de máquinas e tamanho do modelo. Com isso, fizemos testes utilizando o flan, porém o loss ficou sempre acima de 3.5. Também tentamos realizar o treinamento de duas formas:
+ - Maquinas com GPU
+ - Em memória
+
+O resultado foi similar, não conseguimos deixar abaixo de 3.5.
+
+Devido a isso, seguimos para outros modelos, obtendo bom resultado no Llama.
+
 ---
 
 ## 🔎 Visão Geral
@@ -53,6 +61,12 @@ O pipeline implementa os seguintes passos:
 
 ---
 ## 📑 Configurações
+
+Nosso treinamento foi realizado através de checkpoints, permitindo melhor controle de recursos durante a execução. Em nossas configurações, foram criadas três opções de execution mode:
+ - INFERENCE_ONLY -> Utiliza o modelo já treinado
+ - TRAIN_FULL -> Inicia o treinamento completo do modelo
+ - TRAIN_RESUME -> Continua o treinamento à partir do checkpoint
+
 ```bash
 MODEL_NAME = "unsloth/Llama-3.2-3B-Instruct-bnb-4bit"
 MAX_LENGTH = 512
@@ -70,6 +84,8 @@ EXECUTION_MODE = "INFERENCE_ONLY"  # ou TRAIN_FULL | TRAIN_RESUME
 ---
 ## 📊 Preparação dos Dados
 
+Para acesso aos dados, nós inicialmente tentamos utilizar o drive, mas por performance optamos pela transferência para o Hugging Face.
+
 1. Carregar dataset Hugging Face:
 ```bash
 dataset = load_dataset("thaistozatto/techchalleng03_trn")
@@ -83,6 +99,7 @@ User: Provide a detailed description of the product titled '<title>'.
 Assistant:
 ```
 ---
+
 ## 🤖 Modelo e Treinamento
 
 * Carregamento do modelo base em 4-bit com FastLanguageModel.
@@ -158,4 +175,5 @@ test_model(model, tokenizer, [
 
 **👉 Em resumo: o fine-tuning foi bem-sucedido. O modelo convergiu, manteve estabilidade e apresenta indícios de boa capacidade de generalização.**
 ![metricas](https://github.com/user-attachments/assets/54149f31-f44f-453d-bdb3-3ea3b2af80e5)
+
 
