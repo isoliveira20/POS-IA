@@ -11,7 +11,7 @@ Como output, o modelo treinado deverá:
 
 O nosso grupo escolheu fazer o **Fine-tuning com Unsloth (Llama-3.2-3B-Instruct 4-bit)**.
 
-Inicialmente nós tentamos outras abordagens como o bert-base-uncased o google/flan-t5-small. Com o bert não tivemos sucesso devido as limitações de máquinas e tamanho do modelo. Com isso, fizemos testes utilizando o flan, porém o loss ficou sempre acima de 3.5. Também tentamos realizar o treinamento de duas formas:
+Inicialmente nós tentamos outras abordagens como o bert-base-uncased e o google/flan-t5-small. Com o bert não tivemos sucesso devido as limitações de máquinas e tamanho do modelo. Com isso, fizemos testes utilizando o flan, porém o loss ficou sempre acima de 3.5. Também tentamos realizar o treinamento de duas formas:
  - Maquinas com GPU
  - Em memória
 
@@ -175,5 +175,6 @@ test_model(model, tokenizer, [
 
 **👉 Em resumo: o fine-tuning foi bem-sucedido. O modelo convergiu, manteve estabilidade e apresenta indícios de boa capacidade de generalização.**
 ![metricas](https://github.com/user-attachments/assets/54149f31-f44f-453d-bdb3-3ea3b2af80e5)
+
 
 
