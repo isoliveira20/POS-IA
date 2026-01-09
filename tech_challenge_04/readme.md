@@ -5,9 +5,10 @@
 
 ## Problema
 
-Pipeline de análise automática de vídeo utilizando Visão Computacional e IA, capaz de detectar pessoas, reconhecer identidades, inferir emoções e identificar atividades corporais em diferentes contextos visuais.
+Criação de uma aplicação que utilize análise de vídeo. O nosso projeto incorpora as técnicas de reconhecimento facial, análise de expressões emocionais em vídeos e detecção de atividades.
 
-🚀 Features
+
+## 🚀 Features
 
 👤 Detecção e tracking de pessoas
 
