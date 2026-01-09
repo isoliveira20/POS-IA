@@ -122,6 +122,7 @@ Ao final do processamento, o script imprime:
 - Total de frames processados
 - Número de anomalias
 - Ranking de atividades detectadas
+<img width="2456" height="248" alt="image" src="https://github.com/user-attachments/assets/6c1afb70-6cbc-4f1d-9622-3f7600912cbb" />
 
 ## ⚠️ Limitações
 
